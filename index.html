@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Anniversary ❤️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Dancing+Script:wght@700&family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap');
+
+        html, body {
+            margin: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at center, #2a0a17 0%, #0a0205 70%, #000000 100%);
+            background-attachment: fixed;
+            color: white;
+        }
+
+        /* ---------- Floating hearts background (always visible) ---------- */
+        #heart-bg {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            bottom: -60px;
+            pointer-events: none;
+            animation-name: floatUp, sway;
+            animation-timing-function: linear, ease-in-out;
+            animation-iteration-count: 1, infinite;
+            will-change: transform, opacity;
+        }
+
+        @keyframes floatUp {
+            0%   { transform: translateY(0) scale(0.4); opacity: 0; }
+            15%  { opacity: 0.85; }
+            80%  { opacity: 0.6; }
+            100% { transform: translateY(-115vh) scale(1.3); opacity: 0; }
+        }
+
+        @keyframes sway {
+            0%, 100% { margin-left: -14px; }
+            50%      { margin-left: 14px; }
+        }
+
+        /* ---------- Login ---------- */
+        #login-page {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 40px 30px;
+            border-radius: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(251, 113, 133, 0.15);
+        }
+
+        .input-group { position: relative; width: 100%; margin-bottom: 20px; }
+
+        .login-input {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(251, 113, 133, 0.25);
+            padding: 15px 20px;
+            border-radius: 18px;
+            width: 100%;
+            color: white;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .login-input:focus {
+            border-color: #fb7185;
+            box-shadow: 0 0 15px rgba(251, 113, 133, 0.25);
+        }
+
+        .eye-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            opacity: 0.6;
+            font-size: 1.2rem;
+        }
+
+        /* ---------- Pages (transparent so hearts show through) ---------- */
+        .page {
+            display: none;
+            height: 100vh;
+            height: 100dvh;
+            width: 100vw;
+            padding: 24px 16px;
+            box-sizing: border-box;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: transparent;
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        .page.active { display: flex; animation: pageReveal 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+        @keyframes pageReveal {
+            from { opacity: 0; filter: blur(10px); transform: scale(1.1); }
+            to   { opacity: 1; filter: blur(0); transform: scale(1); }
+        }
+
+        .float-text { animation: textFloat 3s ease-in-out infinite; }
+        @keyframes textFloat {
+            0%, 100% { transform: translateY(0px); }
+            50%      { transform: translateY(-15px); }
+        }
+
+        .elite-btn {
+            background: linear-gradient(45deg, #fb7185, #e11d48);
+            padding: 14px 40px;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(225, 29, 72, 0.4);
+            transition: all 0.4s;
+            z-index: 20;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .elite-btn:hover { transform: scale(1.05) translateY(-3px); }
+
+        .font-romantic { font-family: 'Dancing Script', cursive; }
+        .font-elite { font-family: 'Playfair Display', serif; }
+
+        /* ---------- Realistic letter ---------- */
+        #page2 { justify-content: flex-start; padding-top: 18px; }
+
+        .letter-wrap {
+            width: 100%;
+            max-width: 560px;
+            margin: auto 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .skip-row {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 8px;
+        }
+
+        .skip-btn {
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            padding: 4px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(251, 113, 133, 0.5);
+            background: rgba(255, 255, 255, 0.06);
+            color: #fda4af;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+        .skip-btn:hover { background: rgba(251, 113, 133, 0.25); color: #fff; }
+
+        .paper {
+            position: relative;
+            width: 100%;
+            border-radius: 6px;
+            background:
+                radial-gradient(ellipse at top left, rgba(255,255,255,0.55), transparent 55%),
+                radial-gradient(ellipse at bottom right, rgba(160,110,60,0.18), transparent 60%),
+                #fbf3e0;
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, 0.65),
+                0 4px 10px rgba(0, 0, 0, 0.4),
+                inset 0 0 60px rgba(150, 100, 50, 0.22);
+            color: #3a2618;
+            overflow: hidden;
+        }
+
+        /* red margin line + ruled lines */
+        .paper::before {
+            content: "";
+            position: absolute;
+            top: 0; bottom: 0;
+            left: 44px;
+            width: 2px;
+            background: rgba(220, 70, 90, 0.35);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .paper-head {
+            padding: 20px 20px 6px 62px;
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            color: #8b2a3d;
+            border-bottom: 1px dashed rgba(139, 42, 61, 0.35);
+            position: relative;
+            z-index: 3;
+        }
+
+        .seal {
+            position: absolute;
+            top: 10px; right: 14px;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #ff6b81, #b3122e 70%);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.45), inset 0 -2px 4px rgba(0,0,0,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+            z-index: 4;
+        }
+
+        #letter-body {
+            max-height: calc(100vh - 290px);
+            max-height: calc(100dvh - 290px);
+            min-height: 180px;
+            overflow-y: auto;
+            padding: 6px 22px 28px 62px;
+            font-family: 'Caveat', cursive;
+            font-size: 26px;
+            line-height: 32px;
+            background-image: repeating-linear-gradient(
+                to bottom,
+                transparent 0,
+                transparent 31px,
+                rgba(100, 140, 200, 0.28) 31px,
+                rgba(100, 140, 200, 0.28) 32px
+            );
+            background-attachment: local;
+            scroll-behavior: smooth;
+            position: relative;
+            z-index: 3;
+        }
+
+        #letter-body::-webkit-scrollbar { width: 6px; }
+        #letter-body::-webkit-scrollbar-thumb { background: rgba(139, 42, 61, 0.4); border-radius: 6px; }
+
+        #letter-body p { margin: 0 0 32px 0; min-height: 32px; word-wrap: break-word; }
+        #letter-body p.to { font-weight: 600; color: #a3203a; }
+        #letter-body p.sign { font-weight: 600; color: #a3203a; }
+
+        .caret {
+            display: inline-block;
+            width: 2px;
+            height: 24px;
+            background: #3a2618;
+            margin-left: 2px;
+            vertical-align: -4px;
+            animation: blink 0.8s steps(1) infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        #next-letter-btn { opacity: 0; pointer-events: none; transition: opacity 0.8s ease, transform 0.4s; margin-top: 22px; }
+        #next-letter-btn.show { opacity: 1; pointer-events: auto; }
+
+        /* ---------- Music toggle ---------- */
+        #music-toggle {
+            position: fixed;
+            bottom: 14px;
+            right: 14px;
+            z-index: 200;
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(251,113,133,0.4);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 480px) {
+            #letter-body { font-size: 23px; padding-left: 54px; padding-right: 16px; }
+            .paper::before { left: 38px; }
+            .paper-head { padding-left: 54px; font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Audio Asset -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="assets/bgm-1.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <button id="music-toggle" onclick="toggleMusic()" aria-label="Toggle music">🔊</button>
+
+    <!-- Floating hearts layer (visible on every page) -->
+    <div id="heart-bg"></div>
+
+    <div id="login-page">
+        <div class="login-card">
+            <div class="text-5xl mb-6">💖</div>
+            <h2 class="text-2xl md:text-3xl font-elite text-rose-300 mb-8">Access Our World</h2>
+            <div class="input-group">
+                <input type="text" id="username" class="login-input" placeholder="User Name" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" class="login-input" placeholder="Password">
+                <span class="eye-icon" onclick="togglePass()">👁️</span>
+            </div>
+            <p id="login-error" class="text-rose-500 text-sm mb-6 hidden">Invalid details, please try again! ❤️</p>
+            <button onclick="checkLogin()" class="elite-btn w-full py-4 text-lg">Unlock Surprise</button>
+        </div>
+    </div>
+
+    <section id="page1" class="page">
+        <div class="text-center z-20">
+            <h3 class="text-rose-400 tracking-[0.4em] md:tracking-[0.6em] uppercase text-[10px] md:text-xs mb-6 opacity-80">Happy Anniversary</h3>
+            <h1 class="text-5xl md:text-8xl font-romantic text-white mb-6 float-text drop-shadow-2xl">
+                Happy anniversary <br> <span class="text-rose-500">thangmeyy 🥰🫶</span>
+            </h1>
+            <button onclick="nextPage('page2')" class="elite-btn">Unfold Love ✨</button>
+        </div>
+    </section>
+
+    <!-- Letter page -->
+    <section id="page2" class="page">
+        <div class="letter-wrap">
+            <div class="skip-row">
+                <button id="skip-btn" class="skip-btn" onclick="skipLetter()">Skip ⏭</button>
+            </div>
+
+            <div class="paper">
+                <div class="seal">❤️</div>
+                <div class="paper-head">My Heart's Letter</div>
+                <div id="letter-body"></div>
+            </div>
+
+            <button id="next-letter-btn" onclick="nextPage('page3')" class="elite-btn">Next Surprise 💕</button>
+        </div>
+    </section>
+
+    <!-- Quiz Page (Will You Marry Me?) -->
+    <section id="page3" class="page">
+        <div class="max-w-xl text-center z-20">
+            <h2 class="text-4xl md:text-6xl font-romantic text-rose-400 mb-8 drop-shadow-lg">Will You Marry Me? 💍</h2>
+            <p class="text-gray-300 text-lg mb-10 italic">Oru chinna quiz... 'No' click seyyave mudiyaathu! 😉</p>
+
+            <div id="quiz-box" class="flex justify-center items-center gap-6 relative h-32">
+                <button id="yes-btn" onclick="handleYes()" class="elite-btn text-xl px-8 py-4">Yes ❤️</button>
+                <button id="no-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold text-xl px-8 py-4 rounded-full shadow-lg">No 🙈</button>
+            </div>
+
+            <div id="quiz-result" class="hidden mt-6">
+                <h3 class="text-3xl md:text-4xl font-romantic text-rose-400 animate-pulse">Congratulations you win my heart! 🥰✨</h3>
+                <button onclick="nextPage('page4')" class="elite-btn mt-8">Final Surprise 🎁</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="page4" class="page">
+        <div id="gift-box" onclick="openGift()" class="cursor-pointer group">
+            <div class="text-[80px] md:text-[120px] transition-transform duration-500 group-hover:scale-110 drop-shadow-2xl">🎁</div>
+            <p class="text-rose-300 tracking-widest text-sm mt-4 animate-pulse text-center">TOUCH TO OPEN</p>
+        </div>
+        <div id="final-card" class="hidden p-8 md:p-10 rounded-[40px] max-w-sm md:max-w-md text-center border border-white/20 backdrop-blur-xl shadow-2xl" style="background: rgba(255,255,255,0.05);">
+            <h3 class="text-3xl md:text-4xl font-romantic text-rose-500 mb-6">Always Yours ❤️</h3>
+            <p class="text-gray-200 italic leading-relaxed text-sm md:text-base">
+                Indha 1 year journey la neraiya bhayam , neraiya love , neraiya miss panni irukom . Evlo kastam vandhalum unna vittu poga maaten sammi . Ennaku eppomey ne mattum dhan thangoo . Unna naan nalla paathukuren pa . Oru naal indha distance laam poi naama onna serndhu irukalam paa🫂
+            </p>
+            <button onclick="location.reload()" class="mt-8 text-[10px] text-gray-500 uppercase tracking-widest cursor-pointer">Replay Story</button>
+        </div>
+    </section>
+
+    <script>
+        /* =========================================================
+           LETTER CONTENT — updated with your exact words.
+           ========================================================= */
+        const LETTER_LINES = [
+            { text: "Happy 1st Anniversary to us, my love! ❤️", cls: "to" },
+            { text: "Oru year aachu… aana unna first time love panna feel pannadhu innum appadiye irukku. 🥹❤️", cls: "" },
+            { text: "Namma rendu perum distance-la irundhaalum, namma hearts-ku mattum distance-e illa. 🤍", cls: "" },
+            { text: "Un kooda pesura ovvoru call-um, un message-kaaga wait panra ovvoru moment-um enakku romba special. 🫶🏻", cls: "" },
+            { text: "Sila neram miss pannumbodhu kashtama irundhaalum, namma relationship-a nenachaa adhellam worth-ah dhaan theriyudhu.", cls: "" },
+            { text: "Oru naal indha long distance ellam mudinju, unna pakkathula vechu namma anniversary-a celebrate panna pora naalukkaaga wait panren. 🥹❤️", cls: "" },
+            { text: "One year down… many more beautiful memories to go. ♾️❤️", cls: "" },
+            { text: "Enna nadandhaalum, en heart always chooses you. 🫂❤️", cls: "sign" }
+        ];
+
+        const TYPE_SPEED = 55;    // ms per character
+        const LINE_PAUSE = 550;   // ms pause between lines
+
+        let typingToken = 0;      // cancels a running typing session
+        let letterDone = false;
+
+        /* ---------- Login ---------- */
+        function togglePass() {
+            const passInput = document.getElementById('password');
+            passInput.type = passInput.type === 'password' ? 'text' : 'password';
+        }
+
+        function checkLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const error = document.getElementById('login-error');
+            
+            // Updated Username & Password as requested
+            if (user === "vedhavijay" && pass === "moon01") {
+                document.getElementById('login-page').style.display = 'none';
+                document.getElementById('page1').classList.add('active');
+
+                // Play background music on successful login
+                const bgMusic = document.getElementById('bg-music');
+                bgMusic.volume = 0.6;
+                bgMusic.play().catch(e => console.log("Audio play blocked by browser policy"));
+                document.getElementById('music-toggle').style.display = 'flex';
+
+                triggerConfetti();
+            } else {
+                error.classList.remove('hidden');
+            }
+        }
+
+        function toggleMusic() {
+            const m = document.getElementById('bg-music');
+            const b = document.getElementById('music-toggle');
+            if (m.paused) { m.play(); b.textContent = '🔊'; }
+            else { m.pause(); b.textContent = '🔇'; }
+        }
+
+        /* ---------- Floating hearts ---------- */
+        function createHearts() {
+            const container = document.getElementById('heart-bg');
+            const emojis = ['❤️', '💖', '💕', '💗', '💘', '💞', '🩷'];
+            setInterval(() => {
+                const heart = document.createElement('div');
+                const dur = Math.random() * 5 + 7; // 7-12s
+                heart.className = 'heart';
+                heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                heart.style.left = Math.random() * 96 + 'vw';
+                heart.style.fontSize = (Math.random() * 22 + 16) + 'px';
+                heart.style.animationDuration = dur + 's, ' + (Math.random() * 2 + 2.5) + 's';
+                heart.style.filter = 'drop-shadow(0 0 6px rgba(251,113,133,0.6))';
+                container.appendChild(heart);
+                setTimeout(() => heart.remove(), dur * 1000 + 200);
+            }, 450);
+        }
+
+        /* ---------- Page navigation ---------- */
+        function nextPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const next = document.getElementById(id);
+            next.classList.add('active');
+            next.scrollTop = 0;
+            triggerConfetti();
+            if (id === 'page2') startLetter();
+        }
+
+        function triggerConfetti() {
+            const colors = ['#fb7185', '#ffffff', '#ffd700', '#ff00ff', '#00ced1', '#ff4500'];
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: colors });
+            confetti({ particleCount: 60, angle: 60, spread: 55, origin: { x: 0, y: 1 }, colors: colors });
+            confetti({ particleCount: 60, angle: 120, spread: 55, origin: { x: 1, y: 1 }, colors: colors });
+        }
+
+        /* ---------- Typewriter letter ---------- */
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        function scrollLetterToEnd() {
+            const body = document.getElementById('letter-body');
+            body.scrollTop = body.scrollHeight;
+        }
+
+        function showNextButton() {
+            document.getElementById('next-letter-btn').classList.add('show');
+            document.getElementById('skip-btn').style.visibility = 'hidden';
+        }
+
+        async function startLetter() {
+            const body = document.getElementById('letter-body');
+            const token = ++typingToken;
+            letterDone = false;
+            body.innerHTML = '';
+            body.scrollTop = 0;
+            document.getElementById('next-letter-btn').classList.remove('show');
+            document.getElementById('skip-btn').style.visibility = 'visible';
+
+            const caret = document.createElement('span');
+            caret.className = 'caret';
+
+            await sleep(1100); // let the page reveal animation finish
+            if (token !== typingToken) return;
+
+            for (const line of LETTER_LINES) {
+                const p = document.createElement('p');
+                if (line.cls) p.className = line.cls;
+                body.appendChild(p);
+                const textNode = document.createTextNode('');
+                p.appendChild(textNode);
+                p.appendChild(caret);
+
+                for (const ch of Array.from(line.text)) {
+                    if (token !== typingToken) return;
+                    textNode.nodeValue += ch;
+                    scrollLetterToEnd();
+                    let delay = TYPE_SPEED;
+                    if (ch === ',' || ch === '.') delay += 180;
+                    await sleep(delay);
+                }
+                await sleep(LINE_PAUSE);
+            }
+
+            if (token !== typingToken) return;
+            caret.remove();
+            letterDone = true;
+            showNextButton();
+        }
+
+        // Skip -> instantly show the full letter
+        function skipLetter() {
+            if (letterDone) return;
+            typingToken++; // cancel the running typing loop
+            const body = document.getElementById('letter-body');
+            body.innerHTML = '';
+            LETTER_LINES.forEach(line => {
+                const p = document.createElement('p');
+                if (line.cls) p.className = line.cls;
+                p.textContent = line.text;
+                body.appendChild(p);
+            });
+            body.style.scrollBehavior = 'auto';
+            body.scrollTop = 0;
+            setTimeout(() => { body.style.scrollBehavior = 'smooth'; }, 50);
+            letterDone = true;
+            showNextButton();
+        }
+
+        /* ---------- "Will you marry me" — No button runs away ---------- */
+        function moveNoButton(e) {
+            if (e && e.cancelable) e.preventDefault();
+            const noBtn = document.getElementById('no-btn');
+            const yesRect = document.getElementById('yes-btn').getBoundingClientRect();
+
+            // Move to <body> once so position:fixed is relative to the viewport
+            if (noBtn.parentElement !== document.body) {
+                document.body.appendChild(noBtn);
+                noBtn.style.position = 'fixed';
+                noBtn.style.zIndex = '60';
+                noBtn.style.transition = 'left 0.25s ease, top 0.25s ease';
+            }
+
+            const w = noBtn.offsetWidth;
+            const h = noBtn.offsetHeight;
+            const maxX = Math.max(10, window.innerWidth - w - 10);
+            const maxY = Math.max(10, window.innerHeight - h - 10);
+
+            let x, y, tries = 0;
+            do {
+                x = 10 + Math.random() * (maxX - 10);
+                y = 10 + Math.random() * (maxY - 10);
+                tries++;
+            } while (tries < 15 &&
+                     x < yesRect.right + 10 && x + w > yesRect.left - 10 &&
+                     y < yesRect.bottom + 10 && y + h > yesRect.top - 10);
+
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+        }
+
+        (function bindNoButton() {
+            const noBtn = document.getElementById('no-btn');
+            ['mouseenter', 'mouseover', 'pointerdown', 'touchstart', 'click', 'focus'].forEach(evt =>
+                noBtn.addEventListener(evt, moveNoButton, { passive: false })
+            );
+        })();
+
+        function handleYes() {
+            document.getElementById('quiz-box').style.display = 'none';
+            document.getElementById('no-btn').style.display = 'none';
+            document.getElementById('quiz-result').classList.remove('hidden');
+            triggerConfetti();
+        }
+
+        function openGift() {
+            document.getElementById('gift-box').classList.add('hidden');
+            const card = document.getElementById('final-card');
+            card.classList.remove('hidden');
+            card.style.animation = 'pageReveal 1s forwards';
+            triggerConfetti();
+        }
+
+        window.onload = () => {
+            createHearts();
+        };
+    </script>
+</body>
+</html>
